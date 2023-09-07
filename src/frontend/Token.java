@@ -13,11 +13,22 @@ public class Token
 {
     public enum TokenType
     {
-        PROGRAM, BEGIN, END, REPEAT, UNTIL, WRITE, WRITELN, 
-        PERIOD, COLON, COLON_EQUALS, SEMICOLON,
-        PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, 
-        EQUALS, LESS_THAN,
-        IDENTIFIER, INTEGER, REAL, STRING, END_OF_FILE, ERROR
+        //Reserved words
+        PROGRAM, BEGIN, END, REPEAT, UNTIL, WRITE, WRITELN, DIV, MOD, AND, OR,
+        NOT, CONST, TYPE, VAR, PROCEDURE, FUNCTION, WHILE, DO, FOR, TO, DOWNTO,
+        IF, THEN, ELSE, CASE, OF,
+
+        //Special symbols
+        PERIOD, COLON, COLON_EQUALS, SEMICOLON,  PLUS, MINUS, STAR, SLASH,
+        LPAREN, RPAREN, EQUALS, LESS_THAN, GREATER_THAN, LESS_THAN_EQUAL, COMMA,
+        GREATER_THAN_EQUAL, NOT_EQUAL, EXPONENT, DBLPERIODS, OPENBRACKET, CLOSEBRACKET,
+        APOSTROPHE,
+
+        //Identifiers, Numbers, and String
+        IDENTIFIER, INTEGER, REAL, STRING, CHARACTER, COMMENT,
+
+        //Miscellaneous
+        END_OF_FILE, ERROR
     }
     
     /**
@@ -35,6 +46,27 @@ public class Token
         reservedWords.put("UNTIL",   TokenType.UNTIL);
         reservedWords.put("WRITE",   TokenType.WRITE);
         reservedWords.put("WRITELN", TokenType.WRITELN);
+        reservedWords.put("DIV", TokenType.DIV);
+        reservedWords.put("MOD",   TokenType.MOD);
+        reservedWords.put("AND",     TokenType.AND);
+        reservedWords.put("OR",  TokenType.OR);
+        reservedWords.put("NOT",   TokenType.NOT);
+        reservedWords.put("CONST",   TokenType.CONST);
+        reservedWords.put("TYPE", TokenType.TYPE);
+        reservedWords.put("VAR", TokenType.VAR);
+        reservedWords.put("PROCEDURE",   TokenType.PROCEDURE);
+        reservedWords.put("FUNCTION",     TokenType.FUNCTION);
+        reservedWords.put("WHILE",  TokenType.WHILE);
+        reservedWords.put("DO",   TokenType.DO);
+        reservedWords.put("FOR",   TokenType.FOR);
+        reservedWords.put("TO", TokenType.TO);
+        reservedWords.put("DOWNTO",  TokenType.DOWNTO);
+        reservedWords.put("IF",   TokenType.IF);
+        reservedWords.put("THEN",   TokenType.THEN);
+        reservedWords.put("ELSE", TokenType.ELSE);
+        reservedWords.put("CASE",   TokenType.CASE);
+        reservedWords.put("OF", TokenType.OF);
+
     }
     
     public TokenType type;       // what type of token
@@ -158,6 +190,10 @@ public class Token
      * @param source the input source.
      * @return the special symbol token.
      */
+    /*
+        GREATER_THAN, LESS_THAN_EQUAL
+        GREATER_THAN_EQUAL, NOT_EQUAL, DBLPERIODS,
+     */
     public static Token specialSymbol(char firstChar, Source source)
     {
         Token token = new Token(firstChar);
@@ -165,6 +201,7 @@ public class Token
 
         switch (firstChar)
         {
+
             case '.' : token.type = TokenType.PERIOD;     break;
             case ';' : token.type = TokenType.SEMICOLON;  break;
             case '+' : token.type = TokenType.PLUS;       break;
@@ -175,6 +212,10 @@ public class Token
             case '<' : token.type = TokenType.LESS_THAN;  break;
             case '(' : token.type = TokenType.LPAREN;     break;
             case ')' : token.type = TokenType.RPAREN;     break;
+            case ',' : token.type = TokenType.COMMA;       break;
+            case '^' : token.type = TokenType.EXPONENT;      break;
+            case '[' : token.type = TokenType.OPENBRACKET;       break;
+            case ']' : token.type = TokenType.CLOSEBRACKET;      break;
             
             case ':' : 
             {
@@ -196,6 +237,7 @@ public class Token
 
                 break;
             }
+
             
             case Source.EOF : token.type = TokenType.END_OF_FILE; break;
             
