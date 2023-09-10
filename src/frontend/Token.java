@@ -20,8 +20,8 @@ public class Token
 
         //Special symbols
         PERIOD, COLON, COLON_EQUALS, SEMICOLON,  PLUS, MINUS, STAR, SLASH,
-        LPAREN, RPAREN, EQUALS, LESS_THAN, GREATER_THAN, LESS_THAN_EQUAL, COMMA,
-        GREATER_THAN_EQUAL, NOT_EQUAL, EXPONENT, DBLPERIODS, OPENBRACKET, CLOSEBRACKET,
+        LPAREN, RPAREN, EQUALS, LESS_THAN, GREATER_THAN, LESS_EQUALS, COMMA,
+        GREATER_EQUALS, NOT_EQUAL, CARAT, DOT_DOT, LBRACKET, RBRACKET,
         APOSTROPHE,
 
         //Identifiers, Numbers, and String
@@ -168,11 +168,30 @@ public class Token
 
         // Loop to append the rest of the characters of the string,
         // up to but not including the closing quote.
-        for (char ch = source.nextChar(); ch != '\''; ch = source.nextChar())
-        {
-            token.text += ch;
+        char ch;
+        while(true) {
+            ch = source.nextChar();
+            if (ch =='\''){
+                ch = source.nextChar();
+                if(ch =='\''){ //check for internal quotes
+
+                }else{
+                    break;
+                }
+            }
+            if(ch == Source.EOF){
+                token.type = TokenType.STRING;
+                tokenError(token, "String not closed");
+                return token;
+            }
+            token.text+=ch;
         }
-        
+
+//        for (char ch = source.nextChar(); ch != '\''; ch = source.nextChar())
+//        {
+//            token.text += ch;
+//        }
+
         token.text += '\'';  // append the closing '
         source.nextChar();   // and consume it
         
@@ -202,20 +221,62 @@ public class Token
         switch (firstChar)
         {
 
-            case '.' : token.type = TokenType.PERIOD;     break;
+            case '.' : {
+                char nextChar = source.nextChar();
+                if(nextChar == '.'){ //check if symbol is .. symbol
+                    token.text +='.';
+                    token.type = TokenType.DOT_DOT;
+                    break;
+
+                }else{ //if it's . symbol
+                    token.type = TokenType.PERIOD;
+                    return token;
+                }
+
+            }
             case ';' : token.type = TokenType.SEMICOLON;  break;
             case '+' : token.type = TokenType.PLUS;       break;
             case '-' : token.type = TokenType.MINUS;      break;
             case '*' : token.type = TokenType.STAR;       break;
             case '/' : token.type = TokenType.SLASH;      break;
             case '=' : token.type = TokenType.EQUALS;     break;
-            case '<' : token.type = TokenType.LESS_THAN;  break;
+            case '<' :
+            {
+                char nextChar = source.nextChar();
+
+                if(nextChar ==  '='){ //check if it's <= symbol
+                    token.text += '=';
+                    token.type = TokenType.LESS_EQUALS;
+
+                }else if(nextChar == '>'){ //check if it's <> symbol
+                    token.text += '>';
+                    token.type = TokenType.NOT_EQUAL;
+                }
+                else{ //if it's just <
+                    token.type = TokenType.LESS_THAN;
+                    return token; //already consumed
+                }
+                break;
+            }
+            case '>' :
+            {
+                char nextChar = source.nextChar();
+
+                if(nextChar ==  '='){ //check if it's >= symbol
+                    token.text += '=';
+                    token.type = TokenType.GREATER_EQUALS;
+                    break;
+                }else{ //if it's just > symbol
+                    token.type = TokenType.GREATER_THAN;
+                    return token; //already consumed
+                }
+            }
             case '(' : token.type = TokenType.LPAREN;     break;
             case ')' : token.type = TokenType.RPAREN;     break;
             case ',' : token.type = TokenType.COMMA;       break;
-            case '^' : token.type = TokenType.EXPONENT;      break;
-            case '[' : token.type = TokenType.OPENBRACKET;       break;
-            case ']' : token.type = TokenType.CLOSEBRACKET;      break;
+            case '^' : token.type = TokenType.CARAT;      break;
+            case '[' : token.type = TokenType.LBRACKET;       break;
+            case ']' : token.type = TokenType.RBRACKET;      break;
             
             case ':' : 
             {
