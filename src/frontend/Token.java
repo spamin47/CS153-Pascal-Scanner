@@ -200,6 +200,11 @@ public class Token
         // Don't include the leading and trailing ' in the value.
         token.value = token.text.substring(1, token.text.length() - 1);
 
+        // changes token type to character for strings with only one character
+        if ((token.text.substring(1, token.text.length() - 1)).length() == 1){
+            token.type = TokenType.CHARACTER;
+        }
+
         return token;
     }
     
